@@ -1,10 +1,24 @@
 # 🎮 Mr Modifier
  HTML5 ve vanilla JavaScript ile geliştirililen paltformlar arasında ilerleyerek
-farklı türdeki engelleri aşmaya çalıştığınız , özel güçleri kullanarak şans faktörü
-ile stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
+farklı türdeki engelleri aşmaya çalıştığınız , özel güçler ve modifiye mekanikleriyle 
+stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 
 ![Oyun Ekran Görüntüsü](images/ss1.PNG)
 
-##  🕹️ Oyun Hakkında
+##  🕹️ Oyun Özellikleri
 
-Oyunda, Osimhen Han karekterini yöneterek tehlikeli platformlar arasında hareket edersiniz.Her bölümdefarklı zorluklar ve düşmanlarla karşılaşırsınız. Oyunu tamamlamak için:
+•Retro tarzda tasarım
+•3 farklı zorluk seviyesinde bölüm 
+•4 farklı özel güç sistemi
+•Can sistemi
+•Süre takibi
+•Ses efektleri ve hareket animasyonu
+
+##🕹️ Oynanış
+Kontroller
+•A : Sola hareket
+D: Sağa hareket
+w: Zıplama
+L: Özel güç kullanımı
+Boşluk: Rastgele güç seçimi(3 kez kullanım sınırı)
+
