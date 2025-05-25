@@ -35,8 +35,8 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 ![Oyun Ekran Görüntüsü](images/ss1.PNG)
 
 # GamePlay ve OYUN 
-- [Mr Modifier](https://github.com/miracbygl/Mr.Modifier)
-- [▶️ Youtube](https://github.com/miracbygl/Mr.Modifier)
+- [Mr Modifier](https://miracbygl.github.io/Mr.Modifier/)
+- [▶️ Youtube](https://youtu.be/ksYXobOBeRc)
 
 
 
