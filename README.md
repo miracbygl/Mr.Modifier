@@ -13,8 +13,8 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 - Can sistemi
 - Süre takibi
 - Ses efektleri ve hareket animasyonu
-
-#🕹️ Oynanış
+![Oyun Ekran Görüntüsü](images/ss2.PNG)
+## 🕹️ Oynanış
 Kontroller
 - A : Sola hareket
 - D: Sağa hareket
