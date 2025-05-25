@@ -35,7 +35,8 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 ![Oyun Ekran Görüntüsü](images/ss1.PNG)
 
 # Mr Modifier ve GamePlay videosu
-- [⚔️Mr Modifier](https://miracbygl.github.io/Mr.Modifier/)
+Projeyi aşağıdaki adresten oynayabilirsiniz:  
+- 🔗 [⚔️Mr Modifier](https://miracbygl.github.io/Mr.Modifier/)
 - [▶️ Youtube](https://youtu.be/ksYXobOBeRc)
 
 
