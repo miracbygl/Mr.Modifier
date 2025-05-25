@@ -46,7 +46,7 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 - ✅CSS
 
 ## 🎨 Asset ve Sound Kaynakları
-- [Arka plan Müzikleri](https://github.com/miracbygl/Mr.Modifier)
+- [Arka plan Müzikleri](https://pixabay.com/sound-effects/)
 - [Animasyonlar ve sesler](https://brackeysgames.itch.io/brackeys-platformer-bundle)
 - Bölüm tasarımları özgün olarak tasarlanmıştır.
 
