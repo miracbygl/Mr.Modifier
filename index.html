@@ -1,0 +1,1025 @@
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mr Modifiers</title>
+  <style>
+    /*Oyunun Teması için uygun koyu tonlarda çerçeve ve arka plan renkleri*/
+  body {
+  margin: 0;
+  background: #2d2212;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+/* Bİr atari oyun çerçevesi efekti */
+.atari-frame {
+  background: linear-gradient(180deg, #bfa76f 0%, #e8d9b0 100%);
+  border: 18px solid #8b6f3d; /* Ahşap çerçeve efekti */
+  border-radius: 40px 40px 60px 60px;
+  box-shadow:
+    0 0 0 24px #bfa76f inset,
+    0 0 80px #000a,
+    0 24px 64px #000c;
+  padding: 36px 36px 56px 36px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* Atari çerçevesinin üst kısmı */
+.atari-frame::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: -48px;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 48px;
+  background: linear-gradient(90deg, #8b6f3d 0%, #e8d9b0 100%);
+  border-radius: 24px 24px 40px 40px;
+  box-shadow: 0 6px 24px #0008;
+  z-index: 2;
+  border: 4px solid #bfa76f;
+}
+/* Atari çerçevesinin alt kısmı */
+#gameCanvas {
+  background: url('img/bg.png') no-repeat center center, #e8d9b0;
+  background-size: cover;
+  border: 8px solid #bfa76f;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px #000a;
+  display: block;
+}
+/* Oyun kontrol bilgileri */
+#control-info {
+  color: #5b4321;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  margin-top: 18px;
+  text-align: center;
+  font-size: 1.2em;
+  text-shadow: 0 1px 4px #e8d9b0, 0 0 2px #bfa76f;
+  letter-spacing: 1px;
+  background: rgba(230, 210, 170, 0.7);
+  padding: 8px 24px;
+  border-radius: 14px;
+  border: 2px solid #bfa76f;
+  display: inline-block;
+}
+/* Başlangıç butonu */
+#startButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 40px;
+  font-size: 24px;
+  font-family: Georgia, serif;
+  background-color: #bfa76f;
+  color: #5b4321;
+  border: 4px solid #8b6f3d;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+/* Başlangıç butonunun efekti */
+#startButton:hover {
+  background-color: #d8c690;
+}
+#gameOverEkrani {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(45, 34, 18, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+#gameOverKutusu {
+  background: #e8d9b0;
+  border: 6px solid #8b6f3d;
+  padding: 40px 60px;
+  border-radius: 24px;
+  text-align: center;
+  font-family: Georgia, serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+#gameOverKutusu h1 {
+  font-size: 48px;
+  color: #5b4321;
+  margin-bottom: 20px;
+}
+
+#gameOverKutusu p {
+  font-size: 24px;
+  color: #5b4321;
+  margin-bottom: 30px;
+}
+
+#yenidenOynaButon {
+  font-size: 24px;
+  padding: 12px 28px;
+  background-color: #bfa76f;
+  color: #5b4321;
+  border: 4px solid #8b6f3d;
+  border-radius: 16px;
+  cursor: pointer;
+}
+/* Yeniden Oyna butonunun  efekti */
+#yenidenOynaButon:hover {
+  background-color: #d8c690;
+}
+
+  </style>
+</head>
+
+
+<audio id="bolum2muzik" src="sounds/bolum2.mp3"></audio>
+<audio id="bolum1muzik" src="sounds/bolum1.mp3"></audio>
+<audio id="damageSound" src="sounds/damage.mp3"></audio>
+<audio id="jumpSound" src="sounds/jump.wav"></audio>
+<audio id="coinSound" src="sounds/coin.wav"></audio>
+
+
+
+
+<body>
+   <div class="atari-frame">
+    <canvas id="gameCanvas" width="1100" height="600"></canvas>
+    <div id="gameOverEkrani" style="display:none;">
+  <div id="gameOverKutusu">
+    <h1>Game Over</h1>
+    <p id="sureBilgisi">Süre: 0 saniye</p>
+    <button id="yenidenOynaButon">Yeniden Oyna</button>
+  </div>
+</div>
+    <div id="control-info"></div>
+  </div>
+  
+<button id="startButton">Oyuna Başla</button>
+<button id="kuralButonu" style="position:absolute; top:calc(50% + 80px); left:50%; transform:translate(-50%, 0); padding:16px 36px; font-size:22px; font-family:Georgia,serif; background-color:#bfa76f; color:#5b4321; border:4px solid #8b6f3d; border-radius:20px; cursor:pointer; z-index:10;">Oyun Kuralları</button>
+<div id="rulesBox" style="display:none; position:absolute; top:calc(50% + 140px); left:50%; transform:translate(-50%, 0); background:#fffbe6; color:#5b4321; border:3px solid #8b6f3d; border-radius:16px; padding:24px 32px; font-family:Georgia,serif; font-size:20px; max-width:420px; z-index:11; text-align:left;">
+  <b>Oyun Kuralları:</b><br>
+  <span id="rulesText"></span>
+</div>
+<button id="hikayeButton" style="position:absolute; top:calc(50% + 150px); left:50%; transform:translate(-50%, 0); padding:16px 36px; font-size:22px; font-family:Georgia,serif; background-color:#bfa76f; color:#5b4321; border:4px solid #8b6f3d; border-radius:20px; cursor:pointer; z-index:10;">Hikaye</button>
+<div id="hikayeBox" style="display:none; position:absolute; top:calc(50% + 210px); left:50%; transform:translate(-50%, 0); background:#fffbe6; color:#5b4321; border:3px solid #8b6f3d; border-radius:16px; padding:24px 32px; font-family:Georgia,serif; font-size:20px; max-width:420px; z-index:11; text-align:left;">
+  <b>Hikaye:</b><br>
+  <span id="hikayeText"></span>
+</div>
+    
+<script>
+var canvas = document.getElementById("gameCanvas");
+var ctx = canvas.getContext("2d");
+var info = document.getElementById("control-info");
+
+var karekter = new Image();  // Oyuncu karakter resmi
+karekter.src = "img/karekter.png";
+
+var alevResmi = new Image();// Alev düşmanı resmi
+alevResmi.src = "img/alev.webp";
+
+var arkaPlan = new Image(); // Arka plan resmi
+arkaPlan.src = "img/bg.png";
+
+
+var dikenResmi = new Image();// Diken resmi
+dikenResmi.src = "img/dikenli.png";
+
+
+var portalResmi = new Image();// Portal resmi
+portalResmi.src = "img/portal.png"; 
+
+var coinSheet = new Image();// Coin  resmi
+coinSheet.src = "img/coin.png";
+
+var dikenKareleri = [];  
+for (let i = 1; i <= 5; i++) { //Dönen Diken animasyonu için kullanılan for dongüsü
+let img = new Image();
+  img.src = "img/diken" + i + ".png";
+  dikenKareleri.push(img);
+}
+  
+var l1Frames = [];               // Yerden çıkkan engel animasyonu için kullanılan for dongüsü
+for (let i = 1; i <= 4; i++) {
+  let img = new Image();
+  img.src = "img/l"+i+".png";
+  l1Frames.push(img);
+}
+
+
+
+var yerCekimi = 1;
+var oyuncu;
+var platforms = [];// platformlar
+var enemies = [];// düşmanlar (alev)
+var dikenler = [];// diken objesi
+var donenDikenler = [];// dönen diken 
+var l1Engeller = []; // Yerden çıkan engeller 
+
+// Coin animasyonu için kareler
+var coinFrames = [];
+var coinFrameWidth = 16; 
+var coinFrameCount = 10;
+
+
+
+
+var wFunc = "longJump";
+var çiftZıplamaUygulama = false;
+var görünmez = false;
+var spaceCount = 0;
+var flag;
+var kutular = [];
+var skor = 0;
+
+var aktifBolum = 0;
+
+let gecenSüre =0;
+
+let zamanlayici;
+let can =3;
+let oyunBitti = false;
+let oyunBasladi = false;
+
+
+
+var mods = ["longJump", "fallThrough", "çiftZıplama", "görünmezlik"];
+
+function bolumYukle(no) {
+
+
+//Öğretici bölüm ayarları
+  if (no === 0) {
+  arkaPlan.src = "img/bg.png";
+  var muzik1 = document.getElementById("bolum1muzik");
+  if (muzik1) {
+    muzik1.currentTime = 0;
+    muzik1.play();
+  }
+
+  kutular = [
+    { x: 450, y: 480, w: 40, h: 40 },
+    { x: 950, y: 330, w: 40, h: 40 } 
+  ];
+
+  dikenler = [
+    { x: 750, y: 570, w: 40, h: 30 } 
+  ];
+  donenDikenler = [];
+
+  l1Engeller = [
+    { x: 400, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+    { x: 450, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+    { x: 500, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+    { x: 550, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+    { x: 600, y: 570, w: 50, h: 30, kare: 0, zaman: 0 }
+
+  ];
+  
+
+  platforms = [
+  { x: 0, y: 570, w: 400, h: 20 }, // sabit
+  { x: 500, y: 520, w: 100, h: 10, dx: 1, ilkX: 500, limit: 100 }, // hareketli -- sağa giden
+  { x: 750, y: 450, w: 120, h: 10, dx: -1, ilkX: 750, limit: 80 }, //  hareketli --sola giden
+  { x: 950, y: 370, w: 150, h: 10 } // sabit platform
+];
+
+  flag = { x: 1000, y: 320, w: 30, h: 50 };
+}
+// 1. bölüm ayarları
+  if (no === 1) {
+      arkaPlan.src = "img/bg.png";
+     // Müziklerin kontrolü
+    var muzik2 = document.getElementById("bolum2muzik");
+    if (muzik2) muzik2.pause();
+  
+    var muzik1 = document.getElementById("bolum1muzik");
+    if (muzik1) {
+      muzik1.currentTime = 0;
+      muzik1.play();
+    }
+      if (no === 1) {
+  arkaPlan.src = "img/bg.png";
+  var muzik1 = document.getElementById("bolum1muzik");
+  if (muzik1) {
+    muzik1.currentTime = 0;
+    muzik1.play();
+  }
+  // Coinler 
+  kutular = [
+    { x: 220, y: 530, w: 40, h: 40 },
+    { x: 700, y: 430, w: 40, h: 40 },
+    { x: 950, y: 330, w: 40, h: 40 }
+  ];
+
+  dikenler = [
+    { x: 350, y: 570, w: 40, h: 30 },
+    { x: 800, y: 570, w: 40, h: 30 }
+  ];
+
+  // Yerden çıkan diken animasyonları
+  l1Engeller = [
+    { x: 450, y: 470, w: 50, h: 30, kare: 0, zaman: 0 },
+    { x: 800, y: 370, w: 50, h: 30, kare: 0, zaman: 0 }
+  ];
+
+  // DÖNEN DİKENLER
+  donenDikenler = [
+    { x: 550, y: 460, w: 40, h: 40, kare: 0, zaman: 0 },
+    { x: 620, y: 360, w: 40, h: 40, kare: 0, zaman: 0 }
+  ];
+
+  
+//Platformlar seviye seviye tasarlanmıştır
+  platforms = [
+    // Alt zemin
+    { x: 0, y: 580, w: 250, h: 10 },
+    { x: 300, y: 580, w: 250, h: 10 },
+    { x:600, y: 580, w:250, h: 10 },
+
+    // 2. kat
+    { x: 200, y:480, w:100, h: 10, dx: 1, ilkX:200, limit: 100 },
+    { x: 500, y: 480, w: 150, h: 10 },
+    { x: 750, y: 480, w:100, h: 10, dx:-1, ilkX: 750, limit: 80 },
+
+    // 3. kat
+    { x: 100, y:380, w: 120, h: 10 },
+    { x: 400, y: 380, w: 150, h: 10 },
+    { x: 700, y: 380, w: 150, h: 10 },
+    { x: 500, y: 280, w: 250, h: 10 },
+    { x: 850, y: 180, w: 80, h: 10 }
+  ];
+
+flag = { x: 1000, y: 110, w: 50, h: 75 };
+  
+}
+
+}
+// 2. bölüm ayarları
+  if (no === 2) {
+    arkaPlan.src = "img/bg.png";
+    var muzik1= document.getElementById("bolum1muzik");
+    if (muzik) {
+      muzik1.pause();
+    }
+
+  
+ if (no === 2) {
+    arkaPlan.src = "img/bg.png";
+    var muzik = document.getElementById("bolum2muzik");
+    if (muzik) {
+      muzik.currentTime = 0;
+      muzik.play();
+    }
+
+    // Coinler 
+    kutular = [
+        { x:100, y: 520, w: 40, h: 40 },   
+        { x: 300, y: 520, w: 40,  h: 40 },  
+        { x: 500, y: 420, w: 40, h: 40 }, 
+        { x:700, y: 320, w: 40, h: 40 },  
+        { x: 900, y: 220, w: 40, h: 40 },  
+        { x: 400, y:  320, w:40, h: 40 }   
+    ];
+
+    // Yerden çıkan dikenler
+    l1Engeller = [
+        
+        { x: 150, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+       
+        { x: 350, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+       
+        { x: 550, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+     
+        { x: 750, y: 570, w: 50, h: 30, kare: 0, zaman: 0 },
+       
+    ];
+
+    // Dönen dikenler
+    donenDikenler = [
+        { x: 200, y: 450, w: 40, h: 40, kare: 0, zaman: 0 },  
+        { x: 450, y: 350, w: 40, h: 40, kare: 0, zaman: 0 },  // Orta yol engel
+        { x: 600, y: 250, w: 40, h: 40, kare: 0, zaman: 0 }  // Üst yol engel
+           // Final platform engel
+    ];
+
+    // Sabit dikenler - Platform aralarında
+    dikenler = [
+        { x: 350, y: 470, w: 40, h: 30 },
+        { x: 550, y: 370, w: 40, h: 30 },
+        { x: 750, y: 270, w: 40, h: 30 },
+        { x: 400, y: 170, w: 40, h: 30 }
+    ];
+
+    // Platformlar 
+    platforms = [
+        //  zemin 
+        { x: 0, y: 570, w: 100, h: 10 },
+        { x: 200, y: 570, w: 100, h: 10 },
+        { x: 400, y: 570, w: 100, h: 10 },
+        { x: 600, y: 570, w: 100, h: 10 },
+        { x: 800, y: 570, w: 100, h: 10 },
+
+        // Orta
+        { x: 150, y: 470, w: 150, h: 10 },
+        { x: 400, y: 470, w: 150, h: 10, dx: 1, ilkX: 400, limit: 100 }, // Hareketli
+        { x: 650, y: 470, w: 150, h: 10 },
+
+        // Üst 
+        { x: 250, y: 370, w: 120, h: 10 },
+        { x: 500, y: 370, w: 130, h: 10, dx: -1, ilkX: 500, limit: 80 }, // Hareketli
+        { x: 750, y: 370, w: 120, h: 10 },
+
+        // En üst 
+        { x: 350, y: 270, w: 100, h: 10 },
+        { x: 600, y: 270, w: 100, h: 10 },
+        { x: 850, y: 270, w: 100, h: 10 },
+
+        // Final 
+        { x: 450, y: 170, w: 150, h: 10 },
+        { x: 700, y: 170, w: 150, h: 10 }
+    ];
+
+    // Portal konumu
+    flag = { x:750, y: 85, w: 30, h: 50 };
+}
+  }
+}
+
+//
+function zamaniBaslat() {
+  if (zamanlayici)
+   clearInterval(zamanlayici);
+  zamanlayici = setInterval(() => {
+    gecenSure++;
+  }, 1000);
+}
+
+
+
+//// Oyun başlangıç fonksiyonu
+function baslaOyun() {
+  if (oyunBitti) return;
+
+  // Oyun başlangıç ayarları
+  oyuncu = {
+    x: 30, // başlangıç x konumu
+     y: 250,// başlangıç y konumu
+      w: 30,// karakter genişliği
+       h: 30,// karakter yüksekliği
+    dx: 0,// x eksenindeki hareket hızı
+     dy: 0,// y eksenindeki hareket hızı
+    yerdeMi: false,
+    dusuyorMu: false
+  };
+
+  spaceCount = 0;
+  çiftZıplamaUygulama = false;
+  görünmez = false;
+  ekranKara = false;
+  bolumYukle(aktifBolum);
+  bilgiGuncelle();
+
+  //Tüm oyun boyunca geçen süreyi hesaplamak için konulan koşul
+  if (can === 3 || gecenSure === 0)
+   {gecenSure = 0; }// Sadece ilk başta veya oyun bittiğinde sıfırla
+  oyunBitti = false;
+  zamaniBaslat();
+}
+
+
+//
+function canAzalt() {// Can azaltma fonksiyonu
+
+  var hasarSesi = document.getElementById("damageSound");
+  if (hasarSesi) {
+    hasarSesi.currentTime = 0;
+    hasarSesi.play();
+  }
+  can--;
+  if (can > 0) {
+    
+    baslaOyun();
+  } else {
+    oyunBitti = true;
+    clearInterval(zamanlayici);//
+    var muzik1 = document.getElementById("bolum1muzik");
+        var muzik2 = document.getElementById("bolum2muzik");
+        if (muzik1) muzik1.pause();
+        if (muzik2) muzik2.pause();
+    document.getElementById("gameOverEkrani").style.display = "flex";
+    document.getElementById("sureBilgisi").textContent = "Geçen Süre: " + gecenSure + " saniye";
+  }
+}
+
+//Modifiye bilgilerini güncelleyen fonksiyon
+function bilgiGuncelle() {
+  var yazi = "X: -";
+  if (wFunc == "longJump") yazi = "Modifiye: Uzun Zıplama";
+  else if (wFunc == "fallThrough") yazi = "Modifiye: Aşağı Geç";
+  else if (wFunc == "çiftZıplama") yazi = "Modifiye: Çift Zıplama";
+  else if (wFunc == "görünmezlik") yazi = "Modifiye: Görünmez";
+  info.textContent =  yazi;
+}
+
+
+
+//Oyunun Temel Oynanış Mekaniği 
+// Rastgele mod seçen fonksiyon
+
+function rastgeleMod() {
+  var i = Math.floor(Math.random() * 5);
+  wFunc = mods[i];
+  if (wFunc == "çiftZıplama") çiftZıplamaUygulama = false;
+  if (wFunc == "görünmezlik") {
+    görünmez = true;
+    setTimeout(() => {
+      görünmez = false;
+      bilgiGuncelle();
+    }, 3000);
+  }
+  bilgiGuncelle();
+}
+
+
+
+//Rastegele mod seçme işlemi için boşluk tuşuna basıldığında çalışan olay dinleyicisi
+// 3 kere basılınca uyarı verip işlemi durdurur
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === " ") {
+    e.preventDefault();
+    if (spaceCount < 3) {
+      rastgeleMod();
+      spaceCount++;
+    } else {
+      alert("3 kereden fazla kullanamazsın.");
+    }
+  }
+});
+
+
+// Oyun güncelleme fonksiyonu
+function guncelle() {
+  oyuncu.x += oyuncu.dx;
+  oyuncu.dy += yerCekimi;
+  oyuncu.y += oyuncu.dy;
+  oyuncu.yerdeMi = false;
+
+
+
+  //Hareketli platformlar için yazılan kod
+ for (var i = 0; i < platforms.length; i++) {
+    var p = platforms[i];
+
+    if (wFunc === "fallThrough" && oyuncu.dusuyorMu) {
+      continue; // özel güç kullanım yerinde platforma çarpışma kontrolü yapılmaz
+    }
+    
+    if (p.dx) { // Eğer platform hareketliyse
+      p.x += p.dx; // Platform pozisyonunu güncelle
+      
+      // Limit kontrolü
+      if (p.x > p.ilkX + p.limit) {
+        p.dx = -1; // Yön değiştir
+      }
+      if (p.x < p.ilkX - p.limit) {
+        p.dx = 1; // Yön değiştir
+      }
+
+      // Eğer oyuncu platform üzerindeyse, platformla birlikte hareket etsin
+      if (oyuncu.yerdeMi && 
+          oyuncu.x + oyuncu.w > p.x && 
+          oyuncu.x < p.x + p.w && 
+          oyuncu.y + oyuncu.h === p.y) {
+        oyuncu.x += p.dx;
+      }
+    }
+    // Oyuncunun platformla kesiştiği alanı kontrol et
+    if (oyuncu.x + oyuncu.w > p.x && 
+        oyuncu.x < p.x + p.w && 
+        oyuncu.y + oyuncu.h > p.y && 
+        oyuncu.y < p.y + p.h) {
+        
+        // Üstten çarpışma
+        if (oyuncu.dy > 0 && oyuncu.y + oyuncu.h - oyuncu.dy <= p.y) {
+            oyuncu.y = p.y - oyuncu.h;
+            oyuncu.dy = 0;
+            oyuncu.yerdeMi = true;
+            çiftZıplamaUygulama = false;
+        }
+        // Alttan çarpışma // engellerin altından geçmeyi engelleme
+        else if (oyuncu.dy < 0 && oyuncu.y - oyuncu.dy >= p.y + p.h) {
+            oyuncu.y = p.y + p.h;
+            oyuncu.dy = 0;
+        }
+      
+    }
+}
+
+// Oyuncunun platformlarla çarpışma kontrolü
+  for (var i = 0; i < platforms.length; i++) {
+    var p = platforms[i];
+    var dikey = oyuncu.dy >= 0;
+    var iciX = oyuncu.x + oyuncu.w > p.x && oyuncu.x < p.x + p.w;
+var dikeyCarpma = oyuncu.dy >= 0 && oyuncu.y + oyuncu.h <= p.y + Math.abs(oyuncu.dy) && oyuncu.y + oyuncu.h + oyuncu.dy >= p.y;
+
+if (iciX && dikeyCarpma && !oyuncu.dusuyorMu) {
+  oyuncu.y = p.y - oyuncu.h;
+  oyuncu.dy = 0;
+  oyuncu.yerdeMi = true;
+  çiftZıplamaUygulama = false;
+}
+
+  }
+
+
+  // Dikenlerin animasyonunu güncelle
+  for (let i = 0; i < donenDikenler.length; i++) {
+  let d = donenDikenler[i];
+  d.zaman++;
+  if (d.zaman >= 5) { 
+    d.kare = (d.kare + 1) % dikenKareleri.length;
+    d.zaman = 0;
+  }
+
+ // Dikenlerin Çarpışma kontrolü
+  if (
+    oyuncu.x < d.x + d.w && oyuncu.x + oyuncu.w > d.x && oyuncu.y < d.y + d.h && oyuncu.y + oyuncu.h > d.y
+  ) {
+    // Dikenlere çarparsa can azalt Görünmez değilse
+    if (!görünmez)
+    { canAzalt();} 
+  }
+}
+
+// Yerden çıkan engellerin animasyonunu güncelle
+for (let i = 0; i < l1Engeller.length; i++) {
+  let engel = l1Engeller[i];
+  engel.zaman++;
+  if (engel.zaman >= 6) {
+    engel.kare = (engel.kare + 1) % l1Frames.length;
+    engel.zaman = 0;
+  }
+
+  // Çarpışma kontrolü 
+  if (
+    oyuncu.x < engel.x + engel.w &&
+    oyuncu.x + oyuncu.w > engel.x &&
+    oyuncu.y < engel.y + engel.h &&
+    oyuncu.y + oyuncu.h > engel.y
+  ) {
+    if (!görünmez) canAzalt();
+  }
+}
+
+  // Diken çarpışma kontrolü  
+  for (let i = 0; i < dikenler.length; i++) {
+  let d = dikenler[i];
+  if (
+    oyuncu.x < d.x + d.w &&
+    oyuncu.x + oyuncu.w > d.x &&
+    oyuncu.y < d.y + d.h &&
+    oyuncu.y + oyuncu.h > d.y
+  ) {
+    if (!görünmez) {
+      canAzalt();
+    }
+  }
+}
+
+  // Alev çarpışma kontrolü
+  if (oyuncu.y + oyuncu.h >= canvas.height) {
+    oyuncu.y = canvas.height - oyuncu.h;
+    oyuncu.dy = 0;
+    oyuncu.yerdeMi = true;
+    çiftZıplamaUygulama = false;
+  }
+
+  for (var j = 0; j < enemies.length; j++) {
+    var dusman = enemies[j];
+    if (
+      oyuncu.x < dusman.x + dusman.w &&
+      oyuncu.x + oyuncu.w > dusman.x &&
+      oyuncu.y < dusman.y + dusman.h &&
+      oyuncu.y + oyuncu.h > dusman.y
+    ) {
+      if (!görünmez) canAzalt();
+    }
+  }
+
+  // Oyuncunun ekranın altına düşmesini engellemek için
+  if (oyuncu.dusuyorMu) oyuncu.dusuyorMu = false;
+
+
+  // Portal ile çarpışma kontrolü
+  if (
+  oyuncu.x < flag.x + flag.w &&
+  oyuncu.x + oyuncu.w > flag.x &&
+  oyuncu.y < flag.y + flag.h &&
+  oyuncu.y + oyuncu.h > flag.y
+) 
+
+
+
+{
+  clearInterval(zamanlayici);// Zamanlayıcıyı durdurma
+if (aktifBolum === 0) {
+  aktifBolum = 1;
+  alert("Tebrikler! Başlangıç seviyesini tamamladın. Dikkatli Ol ZOR BÖLÜMLER!");
+  baslaOyun();
+} else if (aktifBolum === 1) {
+  aktifBolum = 2;
+  
+  baslaOyun();
+} else {
+  alert("Tebrikler! Oyunu bitirdin. Toplam süren: " + gecenSure + " saniye");
+  aktifBolum = 1;
+  gecenSure = 0;
+  can = 3;
+  oyunBitti = false;
+  baslaOyun();
+}
+
+}
+
+  
+   // Coin çarpışma kontrolü 
+for (let i = kutular.length - 1; i >= 0; i--) {
+    let coin = kutular[i];
+    
+    // Coin animasyonunu 
+    coin.frameTime = (coin.frameTime || 0) + 1;
+    if (coin.frameTime >= 5) {
+      coin.frame = ((coin.frame || 0) + 1) % coinFrameCount;
+      coin.frameTime = 0;
+    }
+
+    // Çarpışma kontrolü
+    if (
+      oyuncu.x < coin.x + coin.w &&
+      oyuncu.x + oyuncu.w > coin.x &&
+      oyuncu.y < coin.y + coin.h &&
+      oyuncu.y + oyuncu.h > coin.y
+    ) {
+      var coinSesi = document.getElementById("coinSound");
+      if (coinSesi) {
+        coinSesi.currentTime = 0;
+        coinSesi.play();
+      }
+      
+      skor += 10;
+      kutular.splice(i, 1);
+    }
+}
+
+}
+// Çizim fonksiyonu
+function ciz() {
+
+if (!oyunBasladi) return;// OyunUN BAŞLAYIP BAŞLAMADIĞINI KONTOL EDİYORUM
+ 
+
+ 
+  
+if (oyunBitti) return;
+
+    ctx.drawImage(arkaPlan, 0, 0, canvas.width, canvas.height);
+ 
+  
+  
+
+
+  // Platformları çiz
+  ctx.fillStyle = "#FF9B45";
+  for (let i = 0; i < platforms.length; i++) {
+    var p = platforms[i];
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+  }
+
+  // Dikenleri çiz
+  for (let i = 0; i < dikenler.length; i++) {
+    var d = dikenler[i];
+     
+    ctx.drawImage(dikenResmi, d.x, d.y, d.w, d.h);
+    
+  }
+
+  // Dönen dikenleri çiz
+for (let i = 0; i < donenDikenler.length; i++) {
+  let d = donenDikenler[i];
+  let resim = dikenKareleri[d.kare];
+
+ctx.drawImage(resim, d.x, d.y, d.w, d.h);
+  
+}
+// Yerden çıkan engelleri çiz
+for (let i = 0; i < l1Engeller.length; i++) {
+  let engel = l1Engeller[i];
+  let kareResmi = l1Frames[engel.kare];
+  
+ctx.drawImage(kareResmi, engel.x, engel.y, engel.w, engel.h);
+  
+}
+
+
+  
+  ctx.globalAlpha =   1.0;//
+  ctx.drawImage(karekter, oyuncu.x, oyuncu.y, oyuncu.w, oyuncu.h);
+  ctx.globalAlpha = 1.0;
+  
+//pORTALI Çiz
+  if (flag) {
+  ctx.drawImage(portalResmi, flag.x, flag.y, flag.w, flag.h);
+}
+
+  for (let i = 0; i < kutular.length; i++) {
+    let coin = kutular[i];
+    ctx.drawImage(
+      coinSheet,                    // kaynak resim
+      coin.frame * coinFrameWidth, // kaynak x 
+      0,                           // kaynak y
+      coinFrameWidth,              // kaynak genişlik
+      coinFrameWidth,              // kaynak yükseklik
+      coin.x,                      // hedef x
+      coin.y,                      // hedef y
+      coin.w,                      // hedef genişlik
+      coin.h                       // hedef yükseklik
+    );
+  }
+
+
+
+ctx.fillStyle = "white";
+ctx.font = "20px Arial";
+ctx.fillText("Geçen Süre: " + gecenSure + "->saniye", 20, 30);
+ctx.fillText("Can: " + can, 20, 60);
+
+
+}
+
+// Oyun döngüsü
+function oyunDongusu() {
+  if (oyunBitti){
+  return;7} // Oyun bittiyse döngüyü durdur
+  guncelle();
+  ciz();
+  requestAnimationFrame(oyunDongusu);// Oyun döngüsünü ÇAĞIRMA 
+}
+
+
+
+//tUŞLARA TEPKİ VEREN OLAY DİNLEYİCİLERİ
+
+
+//ANAhtar olay dinleyicisi
+document.addEventListener("keydown", function (e) {
+  var tus = e.key.toLowerCase();
+  if (tus == "a") oyuncu.dx = -3;
+  if (tus == "d") oyuncu.dx = 3;
+  if (tus == "w" && oyuncu.yerdeMi) {
+    var jumpSesi = document.getElementById("jumpSound");
+    if (jumpSesi) {
+      jumpSesi.currentTime = 0;
+      jumpSesi.play();
+    }
+
+    oyuncu.dy = -14;
+    
+    oyuncu.yerdeMi = false;
+  }
+
+
+  // Uzun zıplama, aşağı geçme, çift zıplama ve görünmezlik modları için L tuşuna basıldığında
+  if (tus == "l") {
+    if (wFunc == "longJump" && oyuncu.yerdeMi) {
+      var jumpSesi = document.getElementById("jumpSound");
+      if (jumpSesi) {
+        jumpSesi.currentTime = 0;
+        jumpSesi.play();
+      }
+      
+      oyuncu.dy = -20;
+      oyuncu.yerdeMi = false;
+    }
+    if (wFunc == "fallThrough" && oyuncu.yerdeMi) {
+      oyuncu.dusuyorMu = true;
+      oyuncu.dy += 5;
+      oyuncu.yerdeMi = false;
+    }
+    if (wFunc == "çiftZıplama" && !oyuncu.yerdeMi && !çiftZıplamaUygulama) {
+      oyuncu.dy = -20;
+      var jumpSesi = document.getElementById("jumpSound");
+      if (jumpSesi) {
+        jumpSesi.currentTime = 0;
+        jumpSesi.play();
+      }
+      çiftZıplamaUygulama = true;
+    }
+    if (wFunc == "görünmezlik") {
+      görünmez = true;
+      setTimeout(function () {
+        görünmez = false;
+        bilgiGuncelle();
+      }, 4000);
+    }
+  }
+});
+  
+//
+// Tuş bırakma olay dinleyicisi KAREKTERİN her sahnede durmasını sağlar
+document.addEventListener("keyup", function (e) {
+  var tus = e.key.toLowerCase();
+  if (tus == "a" || tus == "d") oyuncu.dx = 0;
+});
+
+document.getElementById("startButton").addEventListener("click", function () {
+  this.style.display = "none"; // Butonu gizle
+  oyunBasladi = true;
+  baslaOyun();
+  
+});
+document.getElementById("yenidenOynaButon").addEventListener("click", function () {
+  document.getElementById("gameOverEkrani").style.display = "none";
+  gecenSure = 0;
+  can = 3;
+  oyunBitti = false;
+  aktifBolum = 0;
+  spaceCount = 0;
+  var muzik1 = document.getElementById("bolum1muzik");
+  var muzik2 = document.getElementById("bolum2muzik");
+  if (muzik1) muzik1.pause();
+  if (muzik2) muzik2.pause();
+
+  baslaOyun();
+  oyunDongusu();
+});
+document.getElementById("kuralButonu").addEventListener("click", function () {
+  var box = document.getElementById("rulesBox");
+  box.style.display = (box.style.display === "none" ? "block" : "none");
+});
+
+// Kurallar metnini kontrol altına alma
+
+  document.getElementById("rulesText").textContent = 
+  "KONTROLLER:\n\n" +
+  "• A tuşu: Sola hareket\n\n" +
+  "• D tuşu: Sağa hareket\n\n" +
+  "• W tuşu: Zıplama\n\n" +
+  "• L tuşu: Özel güç kullanımı\n\n" +
+  "• Boşluk: Rastgele güç seç (3 kez)\n\n" +
+  "ÖZEL GÜÇLER:\n\n" +
+  "• Uzun Zıplama: Daha yükseğe zıpla\n" +
+  "• Aşağı Geçme: Platformların içinden geç\n" +
+  "• Çift Zıplama: Havadayken tekrar zıpla\n" +
+  "• Görünmezlik: Engellere çarpmadan geç\n\n" +
+  "MODİYE SEÇİMLERİ İLE RİSK AL VE DAHA KISA SÜREDE TAMAMLA!\n\n" ;
+
+
+  // Hikaye butonuna tıklandığında hikaye kutusunu gösterir
+document.getElementById("hikayeButton").addEventListener("click", function () {
+  var box = document.getElementById("hikayeBox");
+  box.style.display = (box.style.display === "none" ? "block" : "none");// Hikaye kutusunu gösterme ve gerektiğinde kapanmasını sağlayan kısım
+});
+
+// Hikaye metnini kontrol altına alma
+document.getElementById("hikayeText").textContent =
+  "Osimhen Han, Orta Çağ'ın tehlikeli diyarlarında kaybolmuş köyünü kurtarmak için zorlu platformlarda ilerliyor. Dikenler, tuzaklar ve düşmanlar arasında cesaretini ve zekasını kullanarak portala ulaşmalı!";
+document.getElementById("startButton").addEventListener("click", function () {
+  this.style.display = "none";
+  document.getElementById("kuralButonu").style.display = "none";// Kurallar butonunu gizle
+  document.getElementById("rulesBox").style.display = "none"; // Kurallar kutusunu gizle
+  document.getElementById("hikayeButton").style.display = "none";// Hikaye butonunu gizle
+  document.getElementById("hikayeBox").style.display = "none";// Hikaye kutusunu gizle
+  oyunBasladi = true;
+  baslaOyun();
+});
+
+
+
+
+
+  baslaOyun();
+oyunDongusu();
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
