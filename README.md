@@ -7,18 +7,18 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 
 ##  🕹️ Oyun Özellikleri
 
-•Retro tarzda tasarım
-•3 farklı zorluk seviyesinde bölüm 
-•4 farklı özel güç sistemi
-•Can sistemi
-•Süre takibi
-•Ses efektleri ve hareket animasyonu
+- Retro tarzda tasarım
+- 3 farklı zorluk seviyesinde bölüm 
+- 4 farklı özel güç sistemi
+- Can sistemi
+- Süre takibi
+- Ses efektleri ve hareket animasyonu
 
-##🕹️ Oynanış
+#🕹️ Oynanış
 Kontroller
-•A : Sola hareket
-D: Sağa hareket
-w: Zıplama
-L: Özel güç kullanımı
-Boşluk: Rastgele güç seçimi(3 kez kullanım sınırı)
+- A : Sola hareket
+- D: Sağa hareket
+- w: Zıplama
+- L: Özel güç kullanımı
+- Boşluk: Rastgele güç seçimi(3 kez kullanım sınırı)
 
