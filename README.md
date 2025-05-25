@@ -39,20 +39,20 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 
 ## 📁 Dosya Yapısı
 Oyun/
-├── index.html
-├── img/
-│   ├── bg.png
-│   ├── karekter.png
-│   ├── alev.webp
-│   ├── dikenli.png
-│   ├── portal.png
-│   ├── coin.png
-│   ├── diken1-5.png
-│   └── l1-4.png
-└── sounds/
-    ├── bolum1.mp3
-    ├── bolum2.mp3
-    ├── damage.mp3
-    ├── jump.wav
-    └── coin.wav
+-├── index.html
+-├── img/
+-│   ├── bg.png
+-│   ├── karekter.png
+-│   ├── alev.webp
+-│   ├── dikenli.png
+-│   ├── portal.png
+-│   ├── coin.png
+-│   ├── diken1-5.png
+-│   └── l1-4.png
+-└── sounds/
+    -├── bolum1.mp3
+    -├── bolum2.mp3
+    -├── damage.mp3
+    -├── jump.wav
+    -└── coin.wav
 
