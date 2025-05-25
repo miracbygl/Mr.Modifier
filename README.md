@@ -14,7 +14,7 @@ stratejik kararlar vermeniz gereken bir 2D platform oyunudur.
 - Süre takibi
 - Ses efektleri ve hareket animasyonu
   
-![Oyun Ekran Görüntüsü](images/ss2.PNG)
+![Oyun Ekran Görüntüsü](images/ss3.PNG)
 
 ## 🕹️ Kontroller
 
